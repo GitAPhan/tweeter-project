@@ -5,18 +5,21 @@
         type="email"
         placeholder="email"
         title="Please fill out your email"
+        ref="email"
         required
       />
       <input
         type="text"
         placeholder="username"
         title="Please fill out your username"
+        ref="username"
         required
       />
       <!-- password input: required, auto-complete new-password to activate password manager's suggest password, password limited to 8-20 hexadecimal digits -->
       <input
         type="password"
         placeholder="password"
+        ref="password"
         required
         autocomplete="new-password"
         pattern="[0-9a-zA-Z]{8,20}"
@@ -26,6 +29,7 @@
       <input
         type="text"
         name="bio"
+        ref="bio"
         placeholder="profile bio..."
         maxlength="200"
         minlength="50"
@@ -39,16 +43,18 @@
         placeholder="profile picture (optional)"
         title="Please input picture URL here"
         name="profile picture"
-        id=""
+        ref="profilePicture"
       />
       <input
         type="url"
         placeholder="banner picture (optional)"
         title="Please input picture URL here"
         name="banner picture"
-        id=""
+        ref="profileBanner"
       />
+      <!-- Lorem ipsum dolor sit, amet consectetur adipisicing elit. Laboriosam, neque consequuntur. Repellendus molestias minima, in, exercitationem sint qui illo est natus earum, expedita nulla dicta sit repudiandae iure. Provident, quaerat? -->
       <input type="submit" value="register" @click="register_user" />
+      <p>{{ register_status_message }}</p>
     </form>
   </div>
 </template>
@@ -60,11 +66,15 @@ export default {
     return {
       // variable to change min age requirement. Placed here for easy 'update' if needed
       min_age_for_signup: 13,
+      // variable used to display current status
+      register_status_message: undefined,
+      test_axios: "birthdate:1900-12-12"
     };
   },
   methods: {
     register_user(button) {
-      var email = button.path[1][0].value;
+      this.register_status_message = "Please wait...";
+      var email = this.$refs.email.value;
       var username = button.path[1][1].value;
       var password = button.path[1][2].value;
       var bio = button.path[1][3].value;
@@ -72,6 +82,7 @@ export default {
       var imageUrl = button.path[1][5].value;
       var bannerUrl = button.path[1][6].value;
 
+      // test conditional
       if (
         email == "" ||
         username == "" ||
@@ -79,11 +90,48 @@ export default {
         bio == "" ||
         birthdate == ""
       ) {
+        this.register_status_message =
+          "Please fill out required fields to continue";
         return false;
-      } else if (email.includes("@") && bio.length > 50) {
-        email, username, password, bio, birthdate, imageUrl, bannerUrl;
-        console.log(button.path[1]);
       }
+
+      // TO CONTINUE WRITING VALIDATION CHECKS LATER
+      // // email validation check
+      //       if (email.includes("@")) {
+      
+      //       }
+
+      var data_request =  {
+            'email': email,
+            'username': username,
+            'password': password,
+            'bio': bio,
+            'birthdate': birthdate,
+          };
+          if(imageUrl != "") {
+            data_request.imageUrl= imageUrl
+          }
+          if(bannerUrl != "") {
+            data_request.bannerUrl= bannerUrl
+          }
+
+
+      this.$axios
+        .request({
+          url: "https://tweeterest.ga/api/users",
+          method: "POST",
+          data: data_request,
+        })
+        .then((response) => {
+          var login_success = response.data;
+          this.$cookies.set("loginToken", login_success.loginToken);
+          this.register_status_message = 'User has been successfully created. Please wait while we log you in';
+          // add redirect to discover page
+
+        })
+        .catch((error) => {
+          this.register_status_message = error.message;
+        });
       // console.log(button.path[1]);
     },
   },

@@ -25,7 +25,7 @@
         pattern="[0-9a-zA-Z]{8,20}"
         title="Enter a password consisting of 8-20 digits"
       />
-
+<!-- bio input: min length and max length limited here -->
       <input
         type="text"
         name="bio"
@@ -36,7 +36,7 @@
         required
       />
       <!-- birthday: required, dates shown for birthdays are 13 years and older -->
-      <input type="date" title="birthday" required :max="min_age_calculator" />
+      <input type="date" title="birthday" ref="birthdate" required :max="min_age_calculator" />
       <!-- optional picture URL inputs for profile images -->
       <input
         type="url"
@@ -68,19 +68,20 @@ export default {
       min_age_for_signup: 13,
       // variable used to display current status
       register_status_message: undefined,
-      test_axios: "birthdate:1900-12-12"
+      test_axios: "birthdate:1900-12-12",
     };
   },
   methods: {
-    register_user(button) {
+    register_user() {
       this.register_status_message = "Please wait...";
+      // key values for POST request
+      var username = this.$refs.username.value;
       var email = this.$refs.email.value;
-      var username = button.path[1][1].value;
-      var password = button.path[1][2].value;
-      var bio = button.path[1][3].value;
-      var birthdate = button.path[1][4].value;
-      var imageUrl = button.path[1][5].value;
-      var bannerUrl = button.path[1][6].value;
+      var password = this.$refs.password.value;
+      var bio = this.$refs.bio.value;
+      var birthdate = this.$refs.birthdate.value;
+      var imageUrl = this.$refs.profilePicture.value;
+      var bannerUrl = this.$refs.profileBanner.value;
 
       // test conditional
       if (
@@ -98,23 +99,24 @@ export default {
       // TO CONTINUE WRITING VALIDATION CHECKS LATER
       // // email validation check
       //       if (email.includes("@")) {
-      
+
       //       }
 
-      var data_request =  {
-            'email': email,
-            'username': username,
-            'password': password,
-            'bio': bio,
-            'birthdate': birthdate,
-          };
-          if(imageUrl != "") {
-            data_request.imageUrl= imageUrl
-          }
-          if(bannerUrl != "") {
-            data_request.bannerUrl= bannerUrl
-          }
-
+      // determine the keypairs that would be included
+      var data_request = {
+        email: email,
+        username: username,
+        password: password,
+        bio: bio,
+        birthdate: birthdate,
+      };
+      // if variable is not empty then run code
+      if (imageUrl != "") {
+        data_request.imageUrl = imageUrl;
+      }
+      if (bannerUrl != "") {
+        data_request.bannerUrl = bannerUrl;
+      }
 
       this.$axios
         .request({
@@ -123,11 +125,16 @@ export default {
           data: data_request,
         })
         .then((response) => {
+          // grabbed response
           var login_success = response.data;
+          // set loginToken in cookie
           this.$cookies.set("loginToken", login_success.loginToken);
-          this.register_status_message = 'User has been successfully created. Please wait while we log you in';
-          // add redirect to discover page
-
+          this.register_status_message =
+            "User has been successfully created. Please wait while we log you in";
+          // add redirect to feed page
+          this.$router.push({
+            name: "FeedPage",
+          });
         })
         .catch((error) => {
           this.register_status_message = error.message;

@@ -6,15 +6,20 @@
     <img ref="profilePicture" class="profilePicture" :src="highlighted_profile.imageUrl" alt="user's profile picture" />
     <h2>{{ highlighted_profile.username }}</h2>
     <p>bio: {{highlighted_profile.bio}}</p>
+
+    <h3>{{highlighted_profile.username}}'s tweets</h3>
+    <posted-tweets :user_id="highlighted_profile.userId"></posted-tweets>
   </div>
 </template>
 
 <script>
+import PostedTweets from "@/components/PostedTweets.vue";
 import NavBar from "@/components/NavBar.vue";
 export default {
   name: "profile-page",
   components: {
     NavBar,
+    PostedTweets,
   },
   data() {
     return {
@@ -41,6 +46,7 @@ export default {
 .profileBanner {
     height: 300px;
     width: 100%;
+    object-fit: cover;
 }
 
 .profilePicture {

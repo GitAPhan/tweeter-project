@@ -2,6 +2,10 @@
     <div>
         <register-form></register-form>
         <login-form></login-form>
+    <section>
+      <h4>Already a user?</h4>
+      <a href="">Login Here</a>
+    </section>
     </div>
 </template>
 
@@ -19,5 +23,9 @@
 </script>
 
 <style lang="scss" scoped>
+* {
+    padding: 0;
+    margin: 0;
+}
 
 </style>

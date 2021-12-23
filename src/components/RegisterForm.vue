@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>Register for Tweeter</h1>
     <form action="javascript:void(0)">
       <input
         type="email"
@@ -32,7 +33,7 @@
         ref="bio"
         placeholder="profile bio..."
         maxlength="200"
-        minlength="50"
+        minlength="20"
         required
       />
       <!-- birthday: required, dates shown for birthdays are 13 years and older -->
@@ -73,7 +74,7 @@ export default {
   },
   methods: {
     register_user() {
-      this.register_status_message = "Please wait...";
+      this.register_status_message = "Please wait while we register you...";
       // key values for POST request
       var username = this.$refs.username.value;
       var email = this.$refs.email.value;
@@ -127,10 +128,19 @@ export default {
         .then((response) => {
           // grabbed response
           var login_success = response.data;
+          var cookie = {
+            loginToken: login_success.loginToken,
+            userId: login_success.userId,
+          }
           // set loginToken in cookie
-          this.$cookies.set("loginToken", login_success.loginToken);
-          this.register_status_message =
-            "User has been successfully created. Please wait while we log you in";
+          this.$cookies.set("loginToken", JSON.stringify(cookie));
+          // store information to log user out
+          var user_info = {
+            'loginToken': login_success.loginToken,
+            'password': login_success.password
+          }
+          this.$store.commit('update_user_profile', user_info);
+          this.register_status_message = "User has been successfully created. Please wait while we log you in";
           // add redirect to feed page
           this.$router.push({
             name: "FeedPage",

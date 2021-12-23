@@ -12,9 +12,30 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    all_users: {},
+    user_profile: {}
   },
   mutations: {
+    update_all_users(state, payload) {
+      state.all_users = payload;
+    },
+    update_user_profile(state, payload) {
+      state.user_profile = payload;
+    }
   },
   actions: {
+    // function to get all users and update all_users($store.state)
+    get_all_users(store) {
+      axios.request({
+        url: "https://tweeterest.ga/api/users",
+      }).then((response) => {
+        // console.log(response);
+        store.commit('update_all_users', response.data)
+      }).catch((error) => {
+        console.log(error);
+        // need to write an error code that makes sense for this request
+        error
+      })
+    }
   },
 })

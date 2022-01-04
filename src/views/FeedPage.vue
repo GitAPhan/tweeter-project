@@ -39,6 +39,7 @@ export default {
   },
   data() {
       return {
+        //   used to force refresh component when key is changed
           key: 0
       }
   },

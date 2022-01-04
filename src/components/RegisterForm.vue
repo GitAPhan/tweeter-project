@@ -26,7 +26,7 @@
         pattern="[0-9a-zA-Z]{8,20}"
         title="Enter a password consisting of 8-20 digits"
       />
-<!-- bio input: min length and max length limited here -->
+      <!-- bio input: min length and max length limited here -->
       <input
         type="text"
         name="bio"
@@ -37,7 +37,13 @@
         required
       />
       <!-- birthday: required, dates shown for birthdays are 13 years and older -->
-      <input type="date" title="birthday" ref="birthdate" required :max="min_age_calculator" />
+      <input
+        type="date"
+        title="birthday"
+        ref="birthdate"
+        required
+        :max="min_age_calculator"
+      />
       <!-- optional picture URL inputs for profile images -->
       <input
         type="url"
@@ -111,12 +117,16 @@ export default {
         bio: bio,
         birthdate: birthdate,
       };
-      // if variable is not empty then run code
+      // if variable is not empty then add user input, else add default media for user profile.
       if (imageUrl != "") {
         data_request.imageUrl = imageUrl;
+      } else {
+        data_request.imageUrl = this.default_profile_picture;
       }
       if (bannerUrl != "") {
         data_request.bannerUrl = bannerUrl;
+      } else {
+        data_request.bannerUrl = this.default_profile_banner;
       }
 
       this.$axios
@@ -131,16 +141,17 @@ export default {
           var cookie = {
             loginToken: login_success.loginToken,
             userId: login_success.userId,
-          }
+          };
           // set loginToken in cookie
           this.$cookies.set("loginToken", JSON.stringify(cookie));
           // store information to log user out
           var user_info = {
-            'loginToken': login_success.loginToken,
-            'password': login_success.password
-          }
-          this.$store.commit('update_user_profile', user_info);
-          this.register_status_message = "User has been successfully created. Please wait while we log you in";
+            loginToken: login_success.loginToken,
+            password: login_success.password,
+          };
+          this.$store.commit("update_user_profile", user_info);
+          this.register_status_message =
+            "User has been successfully created. Please wait while we log you in";
           // add redirect to feed page
           this.$router.push({
             name: "FeedPage",
@@ -169,6 +180,12 @@ export default {
       // format of min_date for input date max attribute
       min_date = yyyy + "-" + mm + "-" + dd;
       return min_date;
+    },
+    default_profile_picture() {
+      return this.$store.state["default_profile_picture"];
+    },
+    default_profile_banner() {
+      return this.$store.state["default_profile_banner"];
     },
   },
 };

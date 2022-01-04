@@ -1,7 +1,7 @@
 <template>
   <div>
-    <article v-for="tweet in tweets" :key="tweet.tweetId">
-      <h3>{{ tweet.content }}</h3>
+    <article class="tweetCard" v-for="tweet in tweets" :key="tweet.tweetId">
+      <h3 class="tweetContent">{{ tweet.content }}</h3>
       <img
         class="tweetImage"
         v-if="tweet.tweetImageUrl != null"
@@ -16,7 +16,7 @@
           :userId="tweet.userId"
           @click="goTo_profile"
         />
-        <h6>{{ tweet.username }} - {{ tweet.createdAt }}</h6>
+        <h6 class="tweetInfo">{{ tweet.username }} - {{ tweet.createdAt }}</h6>
       </div>
     </article>
   </div>
@@ -76,9 +76,33 @@ export default {
 
 .profileImage {
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
   object-fit: cover;
   border: black 4px solid;
+  grid-area: b;
+}
+
+.tweetImage {
+  max-width: 100px;
+  max-height: 100px;
+  grid-area: d;
+}
+
+.tweetInfo {
+  grid-area: c;
+}
+
+.tweetCard {
+  border: black 1px solid;
+  padding: 15px;
+  display: grid;
+  grid-template-areas: "a a a"
+  "b c d";
+  margin: 10px;
+}
+
+.tweetContent {
+  grid-area: a;
 }
 </style>

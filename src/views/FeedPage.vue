@@ -1,26 +1,8 @@
 <template>
   <div>
     <h1>Feed Page</h1>
-    <nav-bar></nav-bar>
-    <section>
-      <h2>send tweets here</h2>
-      <form :key="key+1" action="javascript:void(0)">
-        <input
-          type="text"
-          maxlength="140"
-          required
-          placeholder="What's happening?"
-          ref="tweet_content"
-        />
-        <input
-          type="url"
-          placeholder="image url here"
-          title="Please input picture URL here"
-          ref="imageUrl"
-        />
-        <input type="submit" value="Tweet" @click="post_tweet" />
-      </form>
-    </section>
+    <header-container></header-container>
+    
     <article>
       <h2>all followed tweets sent here</h2>
       <posted-tweets :key="key"></posted-tweets>
@@ -30,11 +12,12 @@
 
 <script>
 import PostedTweets from "@/components/PostedTweets.vue";
-import NavBar from "@/components/NavBar.vue";
+import HeaderContainer from "@/components/HeaderContainer.vue";
+import HeaderContainer from '../components/mainComponents/HeaderContainer.vue';
 export default {
   name: "feed-page",
   components: {
-    NavBar,
+    HeaderContainer,
     PostedTweets,
   },
   data() {

@@ -1,5 +1,4 @@
-// component to display tweet content
-// make GET request
+// component to contain showtweet(s)
 <template>
     <div>
 
@@ -8,7 +7,7 @@
 
 <script>
     export default {
-        name: 'show-tweet'
+        name: 'tweet-container'
     }
 </script>
 

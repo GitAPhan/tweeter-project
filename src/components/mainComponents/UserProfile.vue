@@ -1,5 +1,4 @@
-// component to contain form to edit tweet content
-// make PATCH request, display request status
+// this will contain the user profile component
 <template>
     <div>
 
@@ -8,7 +7,7 @@
 
 <script>
     export default {
-        name: 'edit-tweet'
+        name: 'user-profile'
     }
 </script>
 

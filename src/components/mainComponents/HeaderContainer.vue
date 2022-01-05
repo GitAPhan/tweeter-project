@@ -4,21 +4,22 @@
     <button @click="goTo_home">Home</button>
     <button @click="goTo_discover">Discover</button>
     <button @click="goTo_myProfile">Profile</button>
-    <submit-content
-      submit_type="2"
-      :unique_key="key"
-      @tweet_submit_data="submit_tweet"
-    ></submit-content>
     <action-button
       :action_type="logout_status"
       @logout_action="logout"
     ></action-button>
+    <submit-content
+      :submit_status="submit_status"
+      :submit_type="submit_type"
+      :unique_key="key"
+      @tweet_submit_data="submit_tweet"
+    ></submit-content>
   </div>
 </template>
 
 <script>
-import ActionButton from "@/component/iAmAction/ActionButton.vue";
-import SubmitContent from "@/component/iEditContent/SubmitContent.vue";
+import ActionButton from "@/components/iAmAction/ActionButton.vue";
+import SubmitContent from "@/components/iEditContent/SubmitContent.vue";
 
 export default {
   name: "header-container",
@@ -32,6 +33,8 @@ export default {
       //   used to force refresh component when key is changed
       key: 0,
       logout_status: "logout",
+      submit_type: 2,
+      submit_status: "Tweet",
     };
   },
   methods: {
@@ -57,6 +60,7 @@ export default {
       });
     },
     logout() {
+          this.logout_status = "logging out, please wait...";
       // logout axios request
       this.$axios
         .request({
@@ -73,19 +77,19 @@ export default {
           this.$router.push({
             name: "LandingPage",
           });
-          this.logout_status = "logout successful";
           response;
         })
         .catch((error) => {
           // write error code here
           this.logout_status = "logout unsuccessful, try again!";
           error;
-          setTimeout(function () {
+          setTimeout(() => {
             this.logout_status = "logout";
           }, 2000);
         });
     },
     submit_tweet(data) {
+      this.submit_status = "Please wait...";
       // this function is to submit tweets
       this.$axios
         .request({
@@ -94,11 +98,23 @@ export default {
           data: data,
         })
         .then((response) => {
-          console.log(response);
+          this.submit_status = "Tweet successful!";
+
           //   this is to force refresh the component
-          this.key++;
+          setTimeout(() => {
+            this.submit_status = "Tweet";
+            this.key++;
+            this.$emit("key_change", this.key);
+          }, 1000);
+          console.log(response);
         })
         .catch((error) => {
+          this.submit_status = "Tweet unsuccessful, please try again!";
+          //   this is to force refresh the component
+          setTimeout(() => {
+            this.submit_status = "Tweet";
+            this.key++;
+          }, 1000);
           //   error code neeeded here
           error;
         });

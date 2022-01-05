@@ -1,25 +1,25 @@
 <template>
   <div>
     <h1>Profile Page</h1>
-    <nav-bar> </nav-bar>
-    <img ref="profileBanner" class="profileBanner" :src="highlighted_profile.bannerUrl" alt="user's profile banner" />
-    <img ref="profilePicture" class="profilePicture" :src="highlighted_profile.imageUrl" alt="user's profile picture" />
-    <h2>{{ highlighted_profile.username }}</h2>
-    <p>bio: {{highlighted_profile.bio}}</p>
+    <header-container> </header-container>
 
-    <h3>{{highlighted_profile.username}}'s tweets</h3>
-    <posted-tweets :user_id="highlighted_profile.userId"></posted-tweets>
+    <view-content :content_type="'profile'" :profile="highlighted_profile"></view-content>
+
+    
+    <tweet-container :user_id="highlighted_profile.userId"></tweet-container>
   </div>
 </template>
 
 <script>
-import PostedTweets from "@/components/PostedTweets.vue";
-import NavBar from "@/components/NavBar.vue";
+import ViewContent from "@/components/iEditContent/ViewContent.vue";
+import TweetContainer from "@/components/mainComponents/TweetContainer.vue";
+import HeaderContainer from "@/components/mainComponents/HeaderContainer.vue";
 export default {
   name: "profile-page",
   components: {
-    NavBar,
-    PostedTweets,
+    HeaderContainer,
+    TweetContainer,
+    ViewContent,
   },
   data() {
     return {
@@ -43,17 +43,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.profileBanner {
-    height: 300px;
-    width: 100%;
-    object-fit: cover;
-}
 
-.profilePicture {
-    border-radius: 50%;
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border: black 4px solid;
-}
 </style>

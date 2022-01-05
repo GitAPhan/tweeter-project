@@ -1,61 +1,56 @@
 <template>
   <div>
     <h1>Feed Page</h1>
-    <header-container></header-container>
-    
+    <header-container @key_change="key_change"></header-container>
+
     <article>
       <h2>all followed tweets sent here</h2>
-      <posted-tweets :key="key"></posted-tweets>
+      <tweet-container :key="key"></tweet-container>
     </article>
   </div>
 </template>
 
 <script>
-import PostedTweets from "@/components/PostedTweets.vue";
-import HeaderContainer from "@/components/HeaderContainer.vue";
-import HeaderContainer from '../components/mainComponents/HeaderContainer.vue';
+import TweetContainer from "@/components/mainComponents/TweetContainer.vue";
+import HeaderContainer from "@/components/mainComponents/HeaderContainer.vue";
 export default {
   name: "feed-page",
   components: {
     HeaderContainer,
-    PostedTweets,
+    TweetContainer,
   },
   data() {
-      return {
-        //   used to force refresh component when key is changed
-          key: 0
-      }
+    return {
+      //   used to force refresh component when key is changed
+      key: 0,
+      followed_tweets: {},
+    };
   },
   methods: {
-    post_tweet() {
-      var tweet_request = {
-        loginToken: this.$cookies.get("loginToken").loginToken,
-        content: this.$refs.tweet_content.value,
-      };
-      // conditional to add imageUrl keypair when value isn't ""
-      if (this.$refs.imageUrl.value != "") {
-        tweet_request.imageUrl = this.$refs.imageUrl.value;
-      }
-
+    key_change(data) {
+      this.key = data;
+    },
+    get_all_followed_users() {
+      // this will grab all the followed users
       this.$axios
         .request({
-          url: "https://tweeterest.ga/api/tweets",
-          method: "POST",
-          data: tweet_request,
+          url: "https://tweeterest.ga/api/follows",
+          params: {
+            userId: this.$cookies.get("loginToken").userId,
+          },
         })
         .then((response) => {
-          console.log(response);
-        //   this is to force refresh the component
-        this.key++
+          response;
         })
         .catch((error) => {
-          //   error code neeeded here
           error;
         });
     },
   },
+  mounted() {
+    this.get_all_followed_users();
+  },
   created() {
-    //   grab all users and store in $store.state
     this.$store.dispatch("get_all_users");
     // check to see if there is a loginToken present
     // if not then user will be redirected to the landing page

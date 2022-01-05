@@ -31,7 +31,7 @@
         title="Please input picture URL here"
         ref="imageUrl"
       />
-      <input type="submit" value="Tweet" @click="post_tweet" />
+      <input type="submit" :value="submit_status" @click="post_tweet" />
     </form>
     <!-- to submit login info -->
     <form v-else action="javascript:void(0)">
@@ -62,12 +62,14 @@ export default {
   name: "submit-content",
   data() {
     return {
-      submit_content_url: value,
+      submit_content_url: undefined,
     };
   },
   props: {
     submit_type: Number,
+    submit_status: String,
     unique_key: Number,
+
   },
   methods: {
     post_tweet() {

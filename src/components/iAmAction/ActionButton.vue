@@ -3,7 +3,9 @@
 // action button to serve purpose of likes, follows, logout
 <template>
   <div>
-    <button @click="user_logout">{{action_type}}</button>
+    <button v-if="this.action_type == 'likes'"></button>
+    <button v-else-if="this.action_type == 'follows'"></button>
+    <button v-else @click="user_logout">{{ action_type }}</button>
   </div>
 </template>
 
@@ -14,24 +16,22 @@ export default {
     // this is used to pass down from parent what's this 'action' button's purpose
     action_type: String,
     tweet_id: Number,
-    user_id: Number
+    user_id: Number,
   },
   data() {
     return {
-    //   likes_data: value,
-    //   likes_method: value,
-    //   follows_data: value,
-    //   follows_method: value,
-    //   login_token: value,
+      
     };
   },
   methods: {
+    // function to emit to parent
     user_logout() {
-        this.$emit('logout_action', true)
-    }
+      this.$emit("logout_action", true);
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+
 </style>

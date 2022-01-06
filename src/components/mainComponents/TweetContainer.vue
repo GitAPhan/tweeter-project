@@ -6,12 +6,15 @@
       v-for="tweet of tweets"
       :key="tweet.tweetId"
       :tweet="tweet"
-    ></view-content>
+    >
+    <!-- <info-icon ></info-icon> -->
+    </view-content>
   </div>
 </template>
 
 <script>
 import ViewContent from "@/components/iEditContent/ViewContent.vue";
+// import InfoIcon from "@/components/iAmAction/InfoIcon.vue";
 
 export default {
   name: "tweet-container",
@@ -68,6 +71,7 @@ export default {
   },
   components: {
     ViewContent,
+    // InfoIcon,
   },
 };
 </script>

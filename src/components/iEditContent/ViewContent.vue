@@ -15,6 +15,10 @@
         :src="tweet.tweetImageUrl"
         alt="tweeted picture"
       />
+      <div class="action_container">
+        <info-icon :tweet_info="tweet" icon_type="like" class="likes"></info-icon>
+        <info-icon :tweet_info="tweet" icon_type="comment" class="comments"></info-icon>
+      </div>
       <div class="userInfo">
         <img
           @click="go_to_profile"
@@ -51,12 +55,14 @@
       />
       <h2>{{ profile.username }}</h2>
       <p>bio: {{ profile.bio }}</p>
-      <h5>{{profile.birthdate}}</h5>
+      <h5>{{ profile.birthdate }}</h5>
     </article>
   </div>
 </template>
  
 <script>
+import InfoIcon from "@/components/iAmAction/InfoIcon.vue";
+
 export default {
   name: "view-content",
   props: {
@@ -78,6 +84,9 @@ export default {
       });
     },
   },
+  components: {
+    InfoIcon,
+  },
 };
 </script>
 
@@ -85,6 +94,11 @@ export default {
 * {
   padding: 0;
   margin: 0;
+}
+
+.action_container {
+  position: absolute;
+  right: 35px;
 }
 
 .profileImage {
@@ -121,16 +135,16 @@ export default {
 }
 
 .profileBanner {
-    height: 300px;
-    width: 100%;
-    object-fit: cover;
+  height: 300px;
+  width: 100%;
+  object-fit: cover;
 }
 
 .profilePicture {
-    border-radius: 50%;
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border: black 4px solid;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: black 4px solid;
 }
 </style>

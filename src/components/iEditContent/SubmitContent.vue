@@ -66,6 +66,7 @@ export default {
     };
   },
   props: {
+    // used to determine which form to show
     submit_type: Number,
     submit_status: String,
     unique_key: Number,

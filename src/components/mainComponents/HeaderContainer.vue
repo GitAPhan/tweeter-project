@@ -60,7 +60,7 @@ export default {
       });
     },
     logout() {
-          this.logout_status = "logging out, please wait...";
+      this.logout_status = "logging out, please wait...";
       // logout axios request
       this.$axios
         .request({
@@ -104,7 +104,7 @@ export default {
           setTimeout(() => {
             this.submit_status = "Tweet";
             this.key++;
-            this.$emit("key_change", this.key);
+            this.$store.commit("update_refresh_key", this.refresh_key++);
           }, 1000);
           console.log(response);
         })
@@ -123,6 +123,9 @@ export default {
   computed: {
     user_profile() {
       return this.$store.state["user_profile"];
+    },
+    refresh_key() {
+      return this.$store.state["refresh_key"];
     },
   },
 };

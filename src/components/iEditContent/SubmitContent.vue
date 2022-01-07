@@ -12,10 +12,10 @@
       <input type="url" name="profileBanner" />
       <input type="submit" name="edit profile submit" />
     </form>
-    <!-- to edit/submit comment and tweets -->
+    <!-- to edit/submit tweets -->
     <form
       v-else-if="this.submit_type == 2"
-      :key="unique_key + 1"
+      :key="unique_key + 1.589123751356"
       action="javascript:void(0)"
     >
       <input
@@ -32,6 +32,21 @@
         ref="imageUrl"
       />
       <input type="submit" :value="submit_status" @click="post_tweet" />
+    </form>
+    <!-- to edit/submit comment -->
+    <form
+      v-else-if="this.submit_type == 1"
+      :key="unique_key + 2.1341531"
+      action="javascript:void(0)"
+    >
+      <input
+        type="text"
+        maxlength="140"
+        required
+        placeholder="Leave a comment"
+        ref="comment_content"
+      />
+      <input ref="comment_button" type="submit" :value="submit_status" @click="post_comment" />
     </form>
     <!-- to submit login info -->
     <form v-else action="javascript:void(0)">
@@ -82,9 +97,19 @@ export default {
       if (this.$refs.imageUrl.value != "") {
         tweet_request.imageUrl = this.$refs.imageUrl.value;
       }
-
+      // this will emit to parent where the code to request is
       this.$emit("tweet_submit_data", tweet_request);
     },
+    post_comment() {
+      this.$refs.comment_button.value = "Please wait..."
+      // the start of putting together the data to be sent for the POST request
+      var comment_content = {
+        content: this.$refs.comment_content.value,
+        loginToken: this.$cookies.get('loginToken').loginToken,
+      }
+      // this will emit to parent, request will be done there
+      this.$emit("post_comment", comment_content);
+    }
   },
 };
 </script>

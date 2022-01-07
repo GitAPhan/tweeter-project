@@ -32,6 +32,6 @@
 }
 
 #app {
-  overflow-x: hidden;
+  overflow: hidden;
 }
 </style>

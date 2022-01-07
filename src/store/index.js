@@ -12,17 +12,29 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    refresh_key: 0,
     all_users: {},
     user_profile: {},
+    tweet_comments: {},
+    highlighted_tweet: {},
     default_profile_banner: 'https://images.unsplash.com/photo-1605778336713-0a7fb1b80c2b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1282&q=80',
     default_profile_picture: 'https://images.unsplash.com/photo-1530842128367-9e448d986a75?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=735&q=80'
   },
   mutations: {
+    update_refresh_key(state, payload) {
+      state.refresh_key = payload;
+    },
     update_all_users(state, payload) {
       state.all_users = payload;
     },
     update_user_profile(state, payload) {
       state.user_profile = payload;
+    },
+    update_tweet_comments(state, payload) {
+      state.tweet_comments = payload;
+    },
+    update_highlighted_tweet(state, payload) {
+      state.highlighted_tweet = payload;
     }
   },
   actions: {

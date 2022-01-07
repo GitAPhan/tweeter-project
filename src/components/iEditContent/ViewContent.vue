@@ -7,6 +7,7 @@
       class="tweetCard"
       :tweetId="tweet.tweetId"
       v-if="this.content_type == 'tweet'"
+      ref="tweetCard"
     >
       <h3 class="tweetContent">{{ tweet.content }}</h3>
       <img
@@ -16,8 +17,23 @@
         alt="tweeted picture"
       />
       <div class="action_container">
-        <info-icon :tweet_info="tweet" icon_type="like" class="likes"></info-icon>
-        <info-icon :tweet_info="tweet" icon_type="comment" class="comments"></info-icon>
+        <info-icon
+          v-if="this.view_comment == undefined"
+          :tweet_info="tweet"
+          icon_type="close"
+        ></info-icon>
+        <info-icon
+          :tweet_info="tweet"
+          icon_type="like"
+          url="https://tweeterest.ga/api/tweet-likes"
+          content_type="tweet"
+        ></info-icon>
+        <info-icon
+          v-if="this.view_comment != undefined"
+          :tweet_info="tweet"
+          icon_type="comment"
+          @open_comment_display="open_comment_display"
+        ></info-icon>
       </div>
       <div class="userInfo">
         <img
@@ -32,11 +48,24 @@
       </div>
     </article>
     <!-- comment format -->
-    <article v-else-if="this.content_type == 'comment'">
-      <h4>comment</h4>
-      <div>
-        <img src="" alt="user profile picture" />
-        <h6>username, timestamp</h6>
+    <article
+      v-else-if="
+        this.content_type == 'comment' && JSON.stringify(this.comment) != '{}'
+      "
+    >
+      <h4>{{ comment.content }}</h4>
+      <div class="action_container">
+        <info-icon
+          :tweet_info="comment"
+          icon_type="like"
+          url="https://tweeterest.ga/api/comment-likes"
+          content_type="comment"
+        ></info-icon>
+      </div>
+      <div class="userInfo">
+        <h6 @click="go_to_comment_profile">
+          {{ comment.username }}, {{ new Date(comment.createdAt) }}
+        </h6>
       </div>
     </article>
     <!-- user profile format -->
@@ -71,6 +100,9 @@ export default {
     tweet: Object,
     // profile
     profile: Object,
+    // comment
+    comment: Object,
+    view_comment: Boolean,
   },
   methods: {
     go_to_profile() {
@@ -82,6 +114,20 @@ export default {
           userId: this.tweet.userId,
         },
       });
+    },
+    go_to_comment_profile() {
+      // go to profile when the username of comment is clicked
+      this.$router.push({
+        name: "ProfilePage",
+        params: {
+          // userId is passed to the profilePage to determine which profile to show
+          userId: this.comment.userId,
+        },
+      });
+    },
+    open_comment_display() {
+      // this will emit to parent to set comment container display grid
+      this.$emit("open_comment_display");
     },
   },
   components: {
@@ -98,7 +144,7 @@ export default {
 
 .action_container {
   position: absolute;
-  right: 35px;
+  right: 2px;
 }
 
 .profileImage {
@@ -121,6 +167,7 @@ export default {
 }
 
 .tweetCard {
+  position: relative;
   border: black 1px solid;
   padding: 15px;
   display: grid;

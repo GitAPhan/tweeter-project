@@ -49,6 +49,7 @@
     </article>
     <!-- comment format -->
     <article
+      class="comment_card"
       v-else-if="
         this.content_type == 'comment' && JSON.stringify(this.comment) != '{}'
       "
@@ -107,13 +108,29 @@ export default {
   methods: {
     go_to_profile() {
       // go to profile function.
-      this.$router.push({
-        name: "ProfilePage",
-        params: {
-          // userId is passed to the profilePage to determine which profile to show
-          userId: this.tweet.userId,
-        },
-      });
+      this.$router
+        .push({
+          name: "ProfilePage",
+          params: {
+            // userId is passed to the profilePage to determine which profile to show
+            userId: this.tweet.userId,
+          },
+        })
+        .catch(() => {
+          this.$router
+            .push({
+              name: "FeedPage",
+            })
+            .then(() => {
+              this.$router.push({
+                name: "ProfilePage",
+                params: {
+                  // userId is passed to the profilePage to determine which profile to show
+                  userId: this.tweet.userId,
+                },
+              });
+            });
+        });
     },
     go_to_comment_profile() {
       // go to profile when the username of comment is clicked
@@ -140,6 +157,15 @@ export default {
 * {
   padding: 0;
   margin: 0;
+}
+
+.comment_card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border: 1px black solid;
+  padding: 5px;
+  margin: 5px;
 }
 
 .action_container {

@@ -6,14 +6,19 @@
       <view-content
         :tweet="this.highlighted_tweet"
         :view_comment="undefined"
+        :key="this.highlighted_tweet.tweetId"
         content_type="tweet"
       ></view-content>
-      <view-content
-        v-for="tweet_comment of tweet_comments"
-        :key="tweet_comment.commentId"
-        :comment="tweet_comment"
-        content_type="comment"
-      ></view-content>
+      <!-- the section was placed around the 'comments' and given a conditional, because 
+      I ran into problems when there was no comments to render and was creating an error -->
+      <section v-if="JSON.stringify(tweet_comments) != '{}'">
+        <view-content
+          v-for="tweet_comment of tweet_comments"
+          :key="tweet_comment.commentId"
+          :comment="tweet_comment"
+          content_type="comment"
+        ></view-content>
+      </section>
       <submit-content
         :unique_key="this.unique_key"
         @post_comment="post_comment"
@@ -81,6 +86,6 @@ export default {
 
 <style lang="scss" scoped>
 article {
-    position: relative;
+  position: relative;
 }
 </style>

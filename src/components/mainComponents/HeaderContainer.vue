@@ -51,13 +51,29 @@ export default {
     goTo_myProfile() {
       // go to profile function.
       var userId = this.$cookies.get("loginToken").userId;
-      this.$router.push({
-        name: "ProfilePage",
-        params: {
-          // userId is passed to the profilePage to determine which profile to show
-          userId: userId,
-        },
-      });
+      this.$router
+        .push({
+          name: "ProfilePage",
+          params: {
+            // userId is passed to the profilePage to determine which profile to show
+            userId: userId,
+          },
+        })
+        .catch(() => {
+          this.$router
+            .push({
+              name: "FeedPage",
+            })
+            .then(() => {
+              this.$router.push({
+                name: "ProfilePage",
+                params: {
+                  // userId is passed to the profilePage to determine which profile to show
+                  userId: userId,
+                },
+              });
+            });
+        });
     },
     logout() {
       this.logout_status = "logging out, please wait...";

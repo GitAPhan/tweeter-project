@@ -9,7 +9,7 @@
       @click="like_request"
     />
     <img
-      v-if="this.icon_type == 'like' && this.like_indicator"
+      v-else-if="this.icon_type == 'like' && this.like_indicator"
       src="@/assets/heartOn.png"
       alt="red heart-shaped liked icon"
       @click="like_request"
@@ -25,6 +25,12 @@
       src="@/assets/cancelIcon.png"
       alt="black and white 'X' close icon"
       @click="close_comment_display"
+    />
+    <img
+      v-else-if="this.icon_type == 'edit'"
+      src="@/assets/editIcon.png"
+      alt="black and white edit icon"
+      @click="edit_content"
     />
   </div>
 </template>
@@ -47,12 +53,6 @@ export default {
     close_comment_display() {
       // global emit to hide tweet_container
       this.$root.$emit("close_comment_display");
-      // empty object to replace value of tweet_comments and highlighted_tweets
-      var empty_object = {};
-      this.$store.commit("update_tweet_comments", empty_object);
-      this.$store.commit("update_highlighted_tweet", empty_object);
-      // this will reload the tweet_container
-      this.$store.commit("update_refresh_key", this.refresh_key+1);
     },
     // this will emit to parent to trigger events
     open_comment_display() {
@@ -72,6 +72,11 @@ export default {
         })
         .catch((error) => {
           error;
+        })
+        .then(() => {
+          // this is to scroll the window to the top and lock scrolling
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          document.body.style.overflow = "hidden";
         });
     },
     display_likes_counter() {
@@ -107,8 +112,8 @@ export default {
         })
         .then(() => {
           // re-enable like button
-          this.$refs.icon_container.style.pointerEvents = "auto";
-          this.$refs.icon_container.style.opacity = 1;
+          this.$refs.icon_container.style.pointerEvents = "";
+          this.$refs.icon_container.style.opacity = "";
         });
     },
     // this will take care of sending request of POST or DELETE, depending on the status of like_indicator(data)

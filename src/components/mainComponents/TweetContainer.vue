@@ -68,7 +68,23 @@ export default {
       this.$refs.comment_container.$el.style.display = "grid";
     },
     close_comment_display() {
-      this.$refs.comment_container.$el.style.display = "none";
+      // an error kept popping up, read properties of undefined (reading '$el')
+      if (this.$refs.comment_container == undefined) {
+        this.$nextTick(() => {
+          this.$refs.comment_container.$el.style.display = "none";
+        });
+      } else {
+        this.$refs.comment_container.$el.style.display = "none";
+      }
+
+      // this is to re-enable scrolling
+      document.body.style.overflow = "";
+      // empty object to replace value of tweet_comments and highlighted_tweets
+      var empty_object = {};
+      this.$store.commit("update_tweet_comments", empty_object);
+      this.$store.commit("update_highlighted_tweet", empty_object);
+      // this will reload the tweet_container
+      this.$store.commit("update_refresh_key", this.refresh_key + 1);
     },
   },
   data() {
@@ -79,7 +95,11 @@ export default {
   },
   mounted() {
     this.get_tweets();
-    this.$root.$on("close_comment_display", this.close_comment_display);
+  },
+  updated() {
+    this.$nextTick(() => {
+      this.$root.$on("close_comment_display", this.close_comment_display);
+    });
   },
   components: {
     ViewContent,

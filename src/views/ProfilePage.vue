@@ -3,14 +3,35 @@
     <h1>Profile Page</h1>
     <header-container> </header-container>
 
-    <view-content :content_type="'profile'" :profile="highlighted_profile"></view-content>
-
-    
-    <tweet-container :user_id="highlighted_profile.userId"></tweet-container>
+    <transition name="fade">
+      <submit-content
+        v-if="showP"
+        :submit_type="3"
+        :profile="highlighted_profile"
+        :user_id="highlighted_profile.userId"
+      ></submit-content>
+      <view-content
+        v-else
+        :content_type="'profile'"
+        :profile="highlighted_profile"
+      ></view-content>
+    </transition>
+    <button
+      v-if="
+        this.highlighted_profile.userId ==
+          this.$cookies.get('loginToken').userId
+          
+      "
+      @click="showP = !showP"
+    >
+      Edit Profile
+    </button>
+    <tweet-container></tweet-container>
   </div>
 </template>
 
 <script>
+import SubmitContent from "@/components/iEditContent/SubmitContent.vue";
 import ViewContent from "@/components/iEditContent/ViewContent.vue";
 import TweetContainer from "@/components/mainComponents/TweetContainer.vue";
 import HeaderContainer from "@/components/mainComponents/HeaderContainer.vue";
@@ -20,10 +41,12 @@ export default {
     HeaderContainer,
     TweetContainer,
     ViewContent,
+    SubmitContent,
   },
   data() {
     return {
       highlighted_profile: {},
+      showP: false,
     };
   },
   beforeMount() {
@@ -43,5 +66,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.fade-enter-from {
+  opacity: 0;
+  transform: translateX(50vw);
+}
+.fade-enter-to {
+  opacity: 1;
+  transform: translateX(0);
+}
+.fade-enter-active {
+  transition: all 1s ease;
+}
+.fade-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+.fade-leave-to {
+  opacity: 0;
+  transform: translateX(-50vw);
+}
+.fade-leave-active {
+  transition: all 1s ease;
+}
 </style>

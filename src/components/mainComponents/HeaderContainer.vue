@@ -87,13 +87,12 @@ export default {
             loginToken: this.$cookies.get("loginToken").loginToken,
           },
         })
-        .then((response) => {
+        .then(() => {
           // delete cookies and redirect to LandingPage
           this.$cookies.remove("loginToken");
           this.$router.push({
             name: "LandingPage",
           });
-          response;
         })
         .catch((error) => {
           // write error code here

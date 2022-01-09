@@ -3,8 +3,7 @@
 // action button to serve purpose of likes, follows, logout
 <template>
   <div>
-    <button v-if="this.action_type == 'likes'"></button>
-    <button v-else-if="this.action_type == 'follows'"></button>
+    <button v-if="this.action_type == 'follows'"></button>
     <button v-else @click="user_logout">{{ action_type }}</button>
   </div>
 </template>

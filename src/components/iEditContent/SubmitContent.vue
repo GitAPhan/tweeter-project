@@ -6,12 +6,14 @@
       <input
         type="email"
         ref="profile_email"
+        placeholder="email"
         name="email"
         :value="this.highlighted_profile.email"
       />
       <input
         type="text"
         ref="profile_username"
+        placeholder="username"
         name="username"
         :value="this.highlighted_profile.username"
       />
@@ -25,6 +27,7 @@
         type="text"
         ref="profile_bio"
         name="bio"
+        placeholder="profile bio"
         :value="this.highlighted_profile.bio"
       />
       <input
@@ -37,15 +40,17 @@
         type="url"
         ref="profile_picture"
         name="profilePicture"
+        placeholder="URL for profile picture"
         :value="this.highlighted_profile.imageUrl"
       />
       <input
         type="url"
         ref="profile_banner"
         name="profileBanner"
+        placeholder="URL for profile banner"
         :value="this.highlighted_profile.bannerUrl"
       />
-      <input type="submit" name="edit profile submit" @click="submit_profile" />
+      <input type="submit" value="register" @click="submit_profile" />
     </form>
     <!-- to edit/submit tweets -->
     <form
@@ -94,20 +99,20 @@
         type="email"
         placeholder="email"
         title="Please fill out your email"
-        ref="email"
+        ref="login_email"
         required
       />
       <input
         type="password"
         placeholder="password"
-        ref="password"
+        ref="login_password"
         required
         autocomplete="new-password"
         pattern="[0-9a-zA-Z]{8,20}"
         title="Enter a password consisting of 8-20 digits"
       />
       <input type="submit" value="Sign in" @click="login_user" />
-      <p>{{ login_status_message }}</p>
+      <p ref="login_status"></p>
     </form>
   </div>
 </template>
@@ -133,6 +138,39 @@ export default {
     this.make_editable();
   },
   methods: {
+    login_user() {
+      // update status message
+      this.$refs.login_status.innerText =
+        "Attempting to log you in. Please wait...";
+      // grabbing login info
+      var request_data = {
+        email: this.$refs.login_email.value,
+        password: this.$refs.login_password.value,
+      };
+      // login request
+      this.$axios
+        .request({
+          url: "https://tweeterest.ga/api/login",
+          method: "POST",
+          data: request_data,
+        })
+        .then((response) => {
+          var user_profile = response.data;
+          // update user profile in the store
+          this.$store.commit("update_user_profile", user_profile);
+          // store loginToken and userId in cookies
+          var loginToken = {
+            loginToken: user_profile.loginToken,
+            userId: user_profile.userId,
+          };
+          this.$cookies.set("loginToken", JSON.stringify(loginToken));
+        })
+        .catch((error) => {
+          this.$refs.login_status.innerText =
+            `Oops, looks like you ran into a problem: ${error.response.data}
+            Please check your login info and try again`;
+        });
+    },
     submit_profile() {
       // conditional to determine if this is a POST or a PATCH request
       if (this.editable) {

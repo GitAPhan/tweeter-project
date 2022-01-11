@@ -12,16 +12,11 @@
       <h3 class="tweetContent">{{ tweet.content }}</h3>
       <img
         class="tweetImage"
-        v-if="this.tweet.tweetImageUrl != null"
+        v-if="this.tweet.tweetImageUrl !== null"
         :src="tweet.tweetImageUrl"
         alt="tweeted picture"
       />
       <div class="action_container">
-        <info-icon
-          v-if="this.view_comment == undefined"
-          :tweet_info="tweet"
-          icon_type="close"
-        ></info-icon>
         <info-icon
           :tweet_info="tweet"
           icon_type="like"
@@ -29,10 +24,16 @@
           content_type="tweet"
         ></info-icon>
         <info-icon
-          v-if="this.view_comment != undefined"
           :tweet_info="tweet"
+          v-if="this.view_comment !== undefined"
           icon_type="comment"
+          content_type="tweet"
           @open_comment_display="open_comment_display"
+        ></info-icon>
+        <info-icon
+          v-if="this.view_comment === undefined"
+          :tweet_info="tweet"
+          icon_type="close"
         ></info-icon>
       </div>
       <div class="userInfo">
@@ -140,7 +141,22 @@ export default {
           // userId is passed to the profilePage to determine which profile to show
           userId: this.comment.userId,
         },
-      });
+      })
+        .catch(() => {
+          this.$router
+            .push({
+              name: "FeedPage",
+            })
+            .then(() => {
+              this.$router.push({
+                name: "ProfilePage",
+                params: {
+                  // userId is passed to the profilePage to determine which profile to show
+                  userId: this.comment.userId,
+                },
+              });
+            });
+        });
     },
     open_comment_display() {
       // this will emit to parent to set comment container display grid

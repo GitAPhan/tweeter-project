@@ -81,6 +81,10 @@ export default {
       return this.$store.state["highlighted_tweet"];
     },
   },
+  beforeDestroy() {    
+      // this is to re-enable scrolling
+      document.body.style.overflow = "";
+  }
 };
 </script>
 

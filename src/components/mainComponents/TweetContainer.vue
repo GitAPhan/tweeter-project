@@ -41,15 +41,17 @@ export default {
           },
         })
         .then((response) => {
-          // console.log(response);
+          // loop to add all followed users to user_follows array
           for (var i = 0; i < response.data.length; i++) {
             user_follows[i + 1] = response.data[i];
           }
         })
         .catch((error) => {
+          // add error code here
           error;
         })
         .then(() => {
+          // variables used to manipulate the array
           tweets = this.all_tweets;
           var tweets_final = [];
           var user_id = this.user_id;
@@ -62,17 +64,22 @@ export default {
               }
             });
           } else if (this.tweet_type == "feed") {
+            // loop to grab the userId from user_follows
             for (var i = 0; i < user_follows.length; i++) {
+              // filter tweets
               var new_tweets = tweets.filter((a) => {
                 if (a.userId == user_follows[i].userId) {
                   return a;
                 }
               });
+              // this will add filtered tweets to tweets_final
               tweets_final = tweets_final.concat(new_tweets);
             }
           } else if (this.tweet_type == "discover") {
             tweets_final = tweets;
+            // loop to grab the userId from user_follows
             for (i = 0; i < user_follows.length; i++) {
+              // this will remove tweets that match the userId of user_follows
               tweets_final = tweets_final.filter((a) => {
                 if (a.userId != user_follows[i].userId) {
                   return a;
@@ -87,6 +94,7 @@ export default {
               tweets_final[i].createdAt
             );
           }
+          // this will sort the array chronologically
           tweets_final.sort((a, b) => {
             if (a.createdAt < b.createdAt) {
               return 1;
@@ -96,6 +104,7 @@ export default {
             }
             return 0;
           });
+          // assign final tweets list to tweets in data
           this.tweets = tweets_final;
         });
     },
@@ -114,9 +123,6 @@ export default {
           this.$refs.comment_container.$el.style.display = "none";
         }
       });
-
-      // this is to re-enable scrolling
-      document.body.style.overflow = "";
       // empty object to replace value of tweet_comments and highlighted_tweets
       var empty_object = {};
       this.$store.commit("update_tweet_comments", empty_object);

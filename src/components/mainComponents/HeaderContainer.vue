@@ -114,16 +114,15 @@ export default {
           method: "POST",
           data: data,
         })
-        .then((response) => {
+        .then(() => {
           this.submit_status = "Tweet successful!";
 
           //   this is to force refresh the component
           setTimeout(() => {
             this.submit_status = "Tweet";
             this.key++;
-            this.$store.commit("update_refresh_key", this.refresh_key++);
+            this.$store.commit("update_refresh_key", this.refresh_key+1);
           }, 1000);
-          console.log(response);
         })
         .catch((error) => {
           this.submit_status = "Tweet unsuccessful, please try again!";

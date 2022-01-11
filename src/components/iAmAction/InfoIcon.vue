@@ -2,32 +2,38 @@
 // display follows, likes, 
 <template>
   <div ref="icon_container">
+    <p v-if="this.icon_type === 'like'" class="badge">
+      {{ this.like_quantity }}
+    </p>
+    <p v-else-if="this.icon_type === 'comment'" class="comment_badge">
+      {{ this.comment_quantity }}
+    </p>
     <img
-      v-if="this.icon_type == 'like' && this.like_indicator == false"
+      v-if="this.icon_type === 'like' && this.like_indicator === false"
       src="@/assets/heartOff.png"
       alt="empty heart-shaped like icon"
       @click="like_request"
     />
     <img
-      v-else-if="this.icon_type == 'like' && this.like_indicator"
+      v-else-if="this.icon_type === 'like' && this.like_indicator"
       src="@/assets/heartOn.png"
       alt="red heart-shaped liked icon"
       @click="like_request"
     />
     <img
-      v-else-if="this.icon_type == 'comment'"
+      v-else-if="this.icon_type === 'comment'"
       src="@/assets/commentIcon.png"
       alt="speech bubble shaped comment icon"
       @click="open_comment_display"
     />
     <img
-      v-else-if="this.icon_type == 'close'"
+      v-else-if="this.icon_type === 'close'"
       src="@/assets/cancelIcon.png"
       alt="black and white 'X' close icon"
       @click="close_comment_display"
     />
     <img
-      v-else-if="this.icon_type == 'edit'"
+      v-else-if="this.icon_type === 'edit'"
       src="@/assets/editIcon.png"
       alt="black and white edit icon"
       @click="edit_content"
@@ -47,6 +53,8 @@ export default {
   data() {
     return {
       like_indicator: false,
+      like_quantity: undefined,
+      comment_quantity: undefined,
     };
   },
   methods: {
@@ -110,6 +118,9 @@ export default {
               this.like_indicator = true;
             }
           }
+          if (user_like.length > 0) {
+            this.like_quantity = user_like.length;
+          }
         })
         .catch((error) => {
           error;
@@ -123,6 +134,43 @@ export default {
             }
           });
         });
+    },
+    display_comment_counter() {
+      if (this.content_type === "tweet") {
+        // disable like button here
+        this.$nextTick(() => {
+          if (this.$refs.icon_container != undefined) {
+            this.$refs.icon_container.style.opacity = 0;
+            this.$refs.icon_container.style.pointerEvents = "none";
+          }
+        });
+        // GET request to get comment counter
+        this.$axios
+          .request({
+            url: "https://tweeterest.ga/api/comments",
+            params: {
+              tweetId: this.tweet_info.tweetId,
+            },
+          })
+          .then((response) => {
+            var comments = response.data;
+            if (comments.length > 0) {
+              this.comment_quantity = comments.length;
+            }
+          })
+          .catch((error) => {
+            error;
+          })
+          .then(() => {
+            // re-enable like button
+            this.$nextTick(() => {
+              if (this.$refs.icon_container != undefined) {
+                this.$refs.icon_container.style.pointerEvents = "";
+                this.$refs.icon_container.style.opacity = "";
+              }
+            });
+          });
+      }
     },
     // this will take care of sending request of POST or DELETE, depending on the status of like_indicator(data)
     like_request() {
@@ -146,6 +194,8 @@ export default {
           .then((response) => {
             // changing the value of like_indicator will determine which heart icon to show
             this.like_indicator = true;
+            // this will dynamically increase the counter without making new request
+            this.like_quantity++;
             response;
           })
           .catch((error) => {
@@ -161,6 +211,8 @@ export default {
           })
           .then((response) => {
             this.like_indicator = false;
+            // this will dynamically decrease the counter without making new request
+            this.like_quantity--;
             response;
           })
           .catch((error) => {
@@ -171,6 +223,9 @@ export default {
   },
   mounted() {
     this.display_likes_counter();
+    if (this.icon_type === "comment") {
+      this.display_comment_counter();
+    }
   },
   computed: {
     refresh_key() {
@@ -182,6 +237,24 @@ export default {
 
 <style lang="scss" scoped>
 img {
-  width: 15px;
+  width: 25px;
+}
+
+.badge {
+  text-align: center;
+  font-size: 0.7em;
+  position: absolute;
+  top: -5px;
+  right: 9px;
+  pointer-events: none;
+}
+
+.comment_badge {
+  text-align: center;
+  font-size: 0.7em;
+  position: absolute;
+  top: 24px;
+  right: 9px;
+  pointer-events: none;
 }
 </style>

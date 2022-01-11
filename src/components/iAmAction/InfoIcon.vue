@@ -81,8 +81,12 @@ export default {
     },
     display_likes_counter() {
       // disable like button here
-      this.$refs.icon_container.style.opacity = 0;
-      this.$refs.icon_container.style.pointerEvents = "none";
+      this.$nextTick(() => {
+        if (this.$refs.icon_container != undefined) {
+          this.$refs.icon_container.style.opacity = 0;
+          this.$refs.icon_container.style.pointerEvents = "none";
+        }
+      });
       // this will determine which params to use
       if (this.content_type == "tweet") {
         var params = {
@@ -112,8 +116,12 @@ export default {
         })
         .then(() => {
           // re-enable like button
-          this.$refs.icon_container.style.pointerEvents = "";
-          this.$refs.icon_container.style.opacity = "";
+          this.$nextTick(() => {
+            if (this.$refs.icon_container != undefined) {
+              this.$refs.icon_container.style.pointerEvents = "";
+              this.$refs.icon_container.style.opacity = "";
+            }
+          });
         });
     },
     // this will take care of sending request of POST or DELETE, depending on the status of like_indicator(data)

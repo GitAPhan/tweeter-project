@@ -5,7 +5,7 @@
 
     <article>
       <h2>all followed tweets sent here</h2>
-      <tweet-container :key="this.refresh_key"></tweet-container>
+      <tweet-container tweet_type="feed" :user_id="this.$cookies.get('loginToken').userId" :key="this.refresh_key"></tweet-container>
     </article>
   </div>
 </template>
@@ -23,32 +23,6 @@ export default {
     refresh_key() {
       return this.$store.state["refresh_key"];
     },
-  },
-  data() {
-    return {
-      followed_tweets: {},
-    };
-  },
-  methods: {
-    get_all_followed_users() {
-      // this will grab all the followed users
-      this.$axios
-        .request({
-          url: "https://tweeterest.ga/api/follows",
-          params: {
-            userId: this.$cookies.get("loginToken").userId,
-          },
-        })
-        .then((response) => {
-          response;
-        })
-        .catch((error) => {
-          error;
-        });
-    },
-  },
-  mounted() {
-    this.get_all_followed_users();
   },
   created() {
     this.$store.dispatch("get_all_users");

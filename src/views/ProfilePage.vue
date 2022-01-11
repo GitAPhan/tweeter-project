@@ -51,11 +51,24 @@
       <input type="submit" value="DELETE PROFILE" @click="delete_profile" />
       <input type="submit" value="CANCEL" @click="cancel_delete" />
     </div>
-    <tweet-container></tweet-container>
+    <!-- follow button that only appears if the userId of the page doesn't match the userId in the cookies -->
+    <action-button
+      v-if="
+        this.highlighted_profile.userId !=
+        this.$cookies.get('loginToken').userId
+      "
+      :action_type="'follows'"
+      :user_id="this.highlighted_profile.userId"
+      :follow_status="this.follow_status"
+      :key="this.refresh_key"
+      @follow_profile="follow_profile"
+    ></action-button>
+    <tweet-container tweet_type="profile" :user_id="this.highlighted_profile.userId"></tweet-container>
   </div>
 </template>
 
 <script>
+import ActionButton from "@/components/iAmAction/ActionButton.vue";
 import SubmitContent from "@/components/iEditContent/SubmitContent.vue";
 import ViewContent from "@/components/iEditContent/ViewContent.vue";
 import TweetContainer from "@/components/mainComponents/TweetContainer.vue";
@@ -67,20 +80,92 @@ export default {
     TweetContainer,
     ViewContent,
     SubmitContent,
+    ActionButton,
   },
   data() {
     return {
       highlighted_profile: {},
       showP: false,
+      // follow status of profile to be stored here
+      follow_status: false,
+      // all followers of this profile will be stored here
+      profile_followers: {},
+      // key to help refresh follow button to reflect changes
+      refresh_key: 0,
     };
   },
   methods: {
+    // function to check the follow status of the current profile
+    follow_status_check() {
+      // GET request to get all users that follow this profile
+      this.$axios
+        .request({
+          url: "https://tweeterest.ga/api/followers",
+          params: {
+            userId: this.highlighted_profile.userId,
+          },
+        })
+        .then((response) => {
+          this.profile_followers = response.data;
+        })
+        .catch((error) => {
+          // need error code here
+          error;
+        })
+        .then(() => {
+          // conditional to only run if profile isn't the logged in user's profile
+          if (
+            this.highlighted_profile.userId !=
+            this.$cookies.get("loginToken").userId
+          ) {
+            // loop through profile_followers to see if there is a match with the userId in the cookie
+            for (var i = 0; i < this.profile_followers.length; i++) {
+              // conditional to set follow_status to true if the userId matches
+              if (
+                this.profile_followers[i].id ==
+                this.$cookies.get("loginToken").userId
+              ) {
+                this.follow_status = true;
+              }
+            }
+          }
+        });
+    },
+    // function to allow user to follow profile
+    follow_profile() {
+      // variable to store method for request
+      var follow_request_method;
+      // conditional to determine follow status
+      if (this.follow_status == true) {
+        follow_request_method = "DELETE";
+      } else {
+        follow_request_method = "POST";
+      }
+      // follow request
+      this.$axios.request({
+        url: 'https://tweeterest.ga/api/follows',
+        method: follow_request_method,
+        data: {
+          loginToken: this.$cookies.get('loginToken').loginToken,
+          followId: this.highlighted_profile.userId,
+        }
+      }).then((response) => {
+        this.follow_status = !this.follow_status;
+        this.refresh_key = this.refresh_key + response.data.status;
+      }).catch((error) => {
+        // insert error code here
+        error;
+      })
+    },
+    // this will close the password popup
     cancel_delete() {
       this.$refs.password_container.style.display = "none";
     },
+    // this will make the password popup visible
     password_popup() {
       this.$refs.password_container.style.display = "block";
     },
+    // this will update the variable highlighted profile in data and hide the edit profile form
     update_highlighted_profile(payload) {
       this.highlighted_profile = payload;
       this.showP = false;
@@ -121,7 +206,11 @@ export default {
         });
     },
   },
-  beforeMount() {
+  created() {
+    // conditional to check if all_users in the store is empty then run the action get_all_users (mainly for refreshing of page)
+    if (JSON.stringify(this.$store.state["all_users"]) == "{}") {
+      this.$store.dispatch("get_all_users");
+    }
     //   this is to determine which profile to show based off of the params sent
     var all_users = this.$store.state["all_users"];
     // for loop and if conditional to determine which of the users match the params
@@ -129,10 +218,23 @@ export default {
       if (all_users[i].userId == this.$route.params.userId) {
         //   update hightlighted_profile
         this.highlighted_profile = all_users[i];
-        // to return once profile has been found
-        return;
       }
     }
+    // conditional to use userId saved in cookies if highlighted_profile is empty
+    // this helps with the refresh of the page and there are no params present
+    if (JSON.stringify(this.highlighted_profile) == "{}") {
+      // loop to add user profile to highlighted_profile
+      this.highlighted_profile = this.$cookies.get("loginToken");
+    }
+    // lets check for followers
+    this.follow_status_check();
+  },
+  computed: {
+    user_profile() {
+      return this.$store.state["user_profile"];
+    },
+  },
+  mounted() {
   },
 };
 </script>

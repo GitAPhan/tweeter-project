@@ -25,27 +25,69 @@ export default {
   name: "tweet-container",
   props: {
     user_id: Number,
+    tweet_type: String,
   },
   methods: {
     get_tweets() {
+      // tweets variable
+      var tweets = [];
+      var user_follows = [this.$cookies.get("loginToken")];
+      // request to grab all users that the current profile follows
       this.$axios
         .request({
-          url: "https://tweeterest.ga/api/tweets",
+          url: "https://tweeterest.ga/api/follows",
           params: {
             userId: this.user_id,
           },
         })
         .then((response) => {
-          var tweets = response.data;
+          // console.log(response);
+          for (var i = 0; i < response.data.length; i++) {
+            user_follows[i + 1] = response.data[i];
+          }
+        })
+        .catch((error) => {
+          error;
+        })
+        .then(() => {
+          tweets = this.all_tweets;
+          var tweets_final = [];
+          var user_id = this.user_id;
+          // conditional to see what type of requests to run
+          if (this.tweet_type == "profile") {
+            // sort through the array of tweets to only have tweets of the profile show
+            tweets_final = tweets.filter((a) => {
+              if (a.userId == user_id) {
+                return a;
+              }
+            });
+          } else if (this.tweet_type == "feed") {
+            for (var i = 0; i < user_follows.length; i++) {
+              var new_tweets = tweets.filter((a) => {
+                if (a.userId == user_follows[i].userId) {
+                  return a;
+                }
+              });
+              tweets_final = tweets_final.concat(new_tweets);
+            }
+          } else if (this.tweet_type == "discover") {
+            tweets_final = tweets;
+            for (i = 0; i < user_follows.length; i++) {
+              tweets_final = tweets_final.filter((a) => {
+                if (a.userId != user_follows[i].userId) {
+                  return a;
+                }
+              });
+            }
+          }
           // convert createdAt to a workable timestamp
-          for (var i = 0; i < tweets.length; i++) {
+          for (i = 0; i < tweets_final.length; i++) {
             // var newTimestamp = tweets[i].createdAt;
-            tweets[i].createdAt = this.timestamp_conversion(
-              tweets[i].createdAt
+            tweets_final[i].createdAt = this.timestamp_conversion(
+              tweets_final[i].createdAt
             );
           }
-
-          tweets.sort((a, b) => {
+          tweets_final.sort((a, b) => {
             if (a.createdAt < b.createdAt) {
               return 1;
             }
@@ -54,10 +96,7 @@ export default {
             }
             return 0;
           });
-          this.tweets = tweets;
-        })
-        .catch((error) => {
-          error;
+          this.tweets = tweets_final;
         });
     },
     timestamp_conversion(payload) {
@@ -69,13 +108,12 @@ export default {
     },
     close_comment_display() {
       // an error kept popping up, read properties of undefined (reading '$el')
-      if (this.$refs.comment_container == undefined) {
-        this.$nextTick(() => {
+      // found a trick to use $nextTick that apperently waits for dom rendering, seems to work so far
+      this.$nextTick(() => {
+        if (this.$refs.comment_container != undefined) {
           this.$refs.comment_container.$el.style.display = "none";
-        });
-      } else {
-        this.$refs.comment_container.$el.style.display = "none";
-      }
+        }
+      });
 
       // this is to re-enable scrolling
       document.body.style.overflow = "";
@@ -89,9 +127,11 @@ export default {
   },
   data() {
     return {
-      content_type: "tweet",
       tweets: {},
     };
+  },
+  created() {
+    this.$store.dispatch("get_all_tweets");
   },
   mounted() {
     this.get_tweets();
@@ -105,6 +145,11 @@ export default {
     ViewContent,
     CommentContainer,
     // InfoIcon,
+  },
+  computed: {
+    all_tweets() {
+      return this.$store.state["all_tweets"];
+    },
   },
 };
 </script>

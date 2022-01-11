@@ -50,6 +50,7 @@
         placeholder="URL for profile banner"
         :value="this.highlighted_profile.bannerUrl"
       />
+      <p ref="profile_reg_status_message"></p>
       <input type="submit" value="register" @click="submit_profile" />
     </form>
     <!-- to edit/submit tweets -->
@@ -156,22 +157,23 @@ export default {
         })
         .then((response) => {
           var user_profile = response.data;
-          // update user profile in the store
+          // update user profile in the store and cookies
           this.$store.commit("update_user_profile", user_profile);
-          // store loginToken and userId in cookies
-          var loginToken = {
-            loginToken: user_profile.loginToken,
-            userId: user_profile.userId,
-          };
-          this.$cookies.set("loginToken", JSON.stringify(loginToken));
+          this.$cookies.set("loginToken", JSON.stringify(user_profile));
+          // add redirect to feed page
+          this.$router.push({
+            name: "FeedPage",
+          });
         })
         .catch((error) => {
-          this.$refs.login_status.innerText =
-            `Oops, looks like you ran into a problem: ${error.response.data}
+          this.$refs.login_status.innerText = `Oops, looks like you ran into a problem: ${error.response.data}
             Please check your login info and try again`;
         });
     },
+    // this is for registering a new profile and updating profile
     submit_profile() {
+      this.$refs.profile_reg_status_message.innerText =
+        "Please wait while we submit your request";
       // conditional to determine if this is a POST or a PATCH request
       if (this.editable) {
         var request_method = "PATCH";
@@ -227,7 +229,7 @@ export default {
           request_data.imageUrl = this.default_profile_picture;
         }
         if (this.$refs.profile_banner != undefined) {
-          request_data.bannerUrl = this.$refs.profile_banner;
+          request_data.bannerUrl = this.$refs.profile_banner.value;
         } else {
           request_data.bannerUrl = this.default_profile_banner;
         }
@@ -241,21 +243,24 @@ export default {
           data: request_data,
         })
         .then((response) => {
-          this.$store.commit("update_user_profile", response.data);
           // if this is a POST request, conditional to create loginToken cookie
           if (request_method == "POST") {
-            var loginToken = {
-              loginToken: response.data.loginToken,
-              userId: response.data.userId,
-            };
-            this.$cookies.set("loginToken", JSON.stringify(loginToken));
+            // add user_profile to state and cookies
+            this.$cookies.set("loginToken", JSON.stringify(response.data));
+            this.$store.commit("update_user_profile", response.data);
+            // add redirect to feed page
+            this.$router.push({
+              name: "FeedPage",
+            });
           } else {
             // emit to parent to hide edit form and show profile
             this.$emit("show_new_profile", response.data);
           }
         })
         .catch((error) => {
-          error;
+          this.$refs.profile_reg_status_message.innerText = `We seem to have ran into a problem.
+          ERROR: ${error.response.data}
+          Please check your profile details and try again`;
         });
     },
     make_editable() {

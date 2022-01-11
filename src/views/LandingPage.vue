@@ -4,8 +4,6 @@
 
     <h3 ref="form_title">Join TWEETER today!</h3>
     <submit-content :submit_type="this.submit_type"></submit-content>
-    <!-- <register-form></register-form> -->
-    <!-- <login-form></login-form> -->
     <section>
       <h4 ref="alternative_route">Already a user?</h4>
       <button ref="alternative_route_button" @click="reg_login_swap">
@@ -17,8 +15,6 @@
 
 <script>
 import SubmitContent from "@/components/iEditContent/SubmitContent.vue";
-// import RegisterForm from "@/components/RegisterForm.vue";
-// import LoginForm from "@/components/LoginForm.vue";
 
 export default {
   name: "landing-page",
@@ -41,11 +37,23 @@ export default {
         this.$refs.alternative_route_button.innerText = "click to login";
       }
     },
+    // function to check if the user is already logged in
+    login_check() {
+      if(this.$cookies.get('loginToken') != undefined) {
+        // user will be redirected to the FeedPage if a loginToken is present
+        this.$router.push({
+          name: "FeedPage",
+        })
+      }
+    }
   },
   components: {
     // RegisterForm,
     // LoginForm,
     SubmitContent,
+  },
+  mounted () {
+    this.login_check();
   },
 };
 </script>

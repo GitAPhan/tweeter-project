@@ -41,12 +41,14 @@ export default {
     goTo_home() {
       this.$router.push({
         name: "FeedPage",
-      });
+        // placed here as a hack for if the user is already at this path
+      }).catch(()=>{});
     },
     goTo_discover() {
       this.$router.push({
         name: "DiscoverPage",
-      });
+        // placed here as a hack for if the user is already at this path
+      }).catch(()=>{});
     },
     goTo_myProfile() {
       // go to profile function.

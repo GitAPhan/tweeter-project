@@ -27,8 +27,8 @@ export default {
     grab_tweets(payload) {
       // store tweets here
       var tweets = [];
-      // tweet params
-      var tweet_params = {};
+      // tweet params  
+      var tweet_params = {}; 
 
       // figure out params
       if (this.userId != "undefined") {

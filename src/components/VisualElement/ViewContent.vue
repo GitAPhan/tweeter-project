@@ -59,7 +59,7 @@ export default {
             .push({
               name: "FeedPage",
             })
-            .then(() => {
+            .then(() => {  
               this.$router.push({
                 name: "ProfilePage",
                 params: {

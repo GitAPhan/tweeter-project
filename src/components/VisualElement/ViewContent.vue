@@ -32,7 +32,7 @@ export default {
     // choice of 'tweet', 'comment' & 'profile'
     content_type: String,
     // tweet content
-    tweet: Object,
+    unfiltered_tweet: Object,
   },
   methods: {
     reformat_tweet() {
@@ -41,6 +41,12 @@ export default {
       if (tweet.imageUrl !== null) {
         tweet[tweetImageUrl] = tweet.imageUrl;
       }
+      // store changes to data
+      this.tweet = tweet;
+    },
+    edit_tweet() {
+      // this will emit to parent that the user would like to edit tweet
+      this.$emit("edit_tweet", this.tweet);
     },
     go_to_profile() {
       // go to profile function.
@@ -53,13 +59,13 @@ export default {
           },
         })
         .catch(() => {
-            // if user is already on a profile page
-            // this will send the user to the feed page and then back to profile page with new params
+          // if user is already on a profile page
+          // this will send the user to the feed page and then back to ProfilePage with new params
           this.$router
             .push({
               name: "FeedPage",
             })
-            .then(() => {  
+            .then(() => {
               this.$router.push({
                 name: "ProfilePage",
                 params: {
@@ -69,6 +75,11 @@ export default {
               });
             });
         });
+    },
+    data() {
+      return {
+        tweet: {},
+      };
     },
   },
   mounted() {

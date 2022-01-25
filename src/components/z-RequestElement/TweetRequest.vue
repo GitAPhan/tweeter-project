@@ -5,9 +5,11 @@
       v-for="tweet of tweets"
       :key="tweet.tweetId"
       :unfiltered_tweet="tweet"
+      @edit_tweet='edit_tweet'
       ></view-content>
       <!-- submit content would have priority when active -->
-        <submit-content>
+        <submit-content v-if="this.tweet_edit !== undefined"
+        :tweet="this.tweet_edit">
         </submit-content>
   </div>
 </template>
@@ -23,6 +25,10 @@ export default {
       SubmitContent,
   },
   methods: {
+      edit_tweet(payload) {
+        //   tweet info emitted from ViewContent will be stored in data to be passed down to SubmitContent
+          this.tweet_edit = payload;
+      }
     //   all actions related to storing tweets are stored here
     grab_tweets(payload) {
       // store tweets here
@@ -128,6 +134,7 @@ export default {
       // only ordered tweets are stored here
       tweets: [],
       loginToken: [this.$cookies.get("loginToken")],
+      tweet_edit: undefined,
     };
   },
 };

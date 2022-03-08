@@ -67,7 +67,7 @@ export default {
       // request to grab all comments relating to the content
       this.$axios
         .request({
-          url: "https://tweeterest.ga/api/comments",
+          url: "http://localhost:5000/api/comments",
           params: {
             tweetId: this.tweet_info.tweetId,
           },
@@ -147,7 +147,7 @@ export default {
         // GET request to get comment counter
         this.$axios
           .request({
-            url: "https://tweeterest.ga/api/comments",
+            url: "http://localhost:5000/api/comments",
             params: {
               tweetId: this.tweet_info.tweetId,
             },

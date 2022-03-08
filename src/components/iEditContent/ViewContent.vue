@@ -20,7 +20,7 @@
         <info-icon
           :tweet_info="tweet"
           icon_type="like"
-          url="https://tweeterest.ga/api/tweet-likes"
+          url="http://localhost:5000/api/tweet_likes"
           content_type="tweet"
         ></info-icon>
         <info-icon
@@ -60,7 +60,7 @@
         <info-icon
           :tweet_info="comment"
           icon_type="like"
-          url="https://tweeterest.ga/api/comment-likes"
+          url="http://localhost:5000/api/comment_likes"
           content_type="comment"
         ></info-icon>
       </div>

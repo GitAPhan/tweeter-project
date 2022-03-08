@@ -151,7 +151,7 @@ export default {
       // login request
       this.$axios
         .request({
-          url: "https://tweeterest.ga/api/login",
+          url: "http://localhost:5000/api/login",
           method: "POST",
           data: request_data,
         })
@@ -238,7 +238,7 @@ export default {
       // here lies the axios request
       this.$axios
         .request({
-          url: "https://tweeterest.ga/api/users",
+          url: "http://localhost:5000/api/users",
           method: request_method,
           data: request_data,
         })

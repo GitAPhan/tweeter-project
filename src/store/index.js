@@ -42,29 +42,29 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    // function to get all users and update all_users($store.state)
-    get_all_users(store) {
-      axios.request({
-        url: "https://tweeterest.ga/api/users",
-      }).then((response) => {
-        // console.log(response);
-        store.commit('update_all_users', response.data)
-      }).catch((error) => {
-        console.log(error);
-        // need to write an error code that makes sense for this request
-        error
-      })
-    },
-    get_all_tweets(store) {
-      // request to get all tweets store it in state
-      axios.request({
-        url: 'https://tweeterest.ga/api/tweets'
-      }).then((response) => {
-        store.commit('update_all_tweets', response.data)
-      }).catch((error) => {
-        // need to write error code here
-        error
-      })
-    }
+    // // function to get all users and update all_users($store.state)
+    // get_all_users(store) {
+    //   axios.request({
+    //     url: "http://localhost:5000/api/users",
+    //   }).then((response) => {
+    //     // console.log(response);
+    //     store.commit('update_all_users', response.data)
+    //   }).catch((error) => {
+    //     console.log(error);
+    //     // need to write an error code that makes sense for this request
+    //     error
+    //   })
+    // },
+    // get_all_tweets(store) {
+    //   // request to get all tweets store it in state
+    //   axios.request({
+    //     url: 'http://localhost:5000/api/tweets'
+    //   }).then((response) => {
+    //     store.commit('update_all_tweets', response.data)
+    //   }).catch((error) => {
+    //     // need to write error code here
+    //     error
+    //   })
+    // }
   },
 })

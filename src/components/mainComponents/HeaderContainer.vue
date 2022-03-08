@@ -82,7 +82,7 @@ export default {
       // logout axios request
       this.$axios
         .request({
-          url: "https://tweeterest.ga/api/login",
+          url: "http://localhost:5000/api/login",
           method: "DELETE",
           data: {
             //   grabbed the loginToken from cookies
@@ -110,7 +110,7 @@ export default {
       // this function is to submit tweets
       this.$axios
         .request({
-          url: "https://tweeterest.ga/api/tweets",
+          url: "http://localhost:5000/api/tweets",
           method: "POST",
           data: data,
         })

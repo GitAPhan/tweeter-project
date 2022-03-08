@@ -63,7 +63,7 @@
       :key="this.refresh_key"
       @follow_profile="follow_profile"
     ></action-button>
-    <tweet-container tweet_type="profile" :user_id="this.highlighted_profile.userId"></tweet-container>
+    <!-- <tweet-container tweet_type="profile" :user_id="this.highlighted_profile.userId"></tweet-container> -->
   </div>
 </template>
 
@@ -71,13 +71,13 @@
 import ActionButton from "@/components/iAmAction/ActionButton.vue";
 import SubmitContent from "@/components/iEditContent/SubmitContent.vue";
 import ViewContent from "@/components/iEditContent/ViewContent.vue";
-import TweetContainer from "@/components/mainComponents/TweetContainer.vue";
+// import TweetContainer from "@/components/mainComponents/TweetContainer.vue";
 import HeaderContainer from "@/components/mainComponents/HeaderContainer.vue";
 export default {
   name: "profile-page",
   components: {
     HeaderContainer,
-    TweetContainer,
+    // TweetContainer,
     ViewContent,
     SubmitContent,
     ActionButton,
@@ -100,7 +100,7 @@ export default {
       // GET request to get all users that follow this profile
       this.$axios
         .request({
-          url: "https://tweeterest.ga/api/followers",
+          url: "http://localhost:5000/api/followers",
           params: {
             userId: this.highlighted_profile.userId,
           },
@@ -143,7 +143,7 @@ export default {
       }
       // follow request
       this.$axios.request({
-        url: 'https://tweeterest.ga/api/follows',
+        url: 'http://localhost:5000/api/follows',
         method: follow_request_method,
         data: {
           loginToken: this.$cookies.get('loginToken').loginToken,
@@ -177,7 +177,7 @@ export default {
       // request to delete user profile
       this.$axios
         .request({
-          url: "https://tweeterest.ga/api/users",
+          url: "http://localhost:5000/api/users",
           method: "DELETE",
           data: {
             loginToken: this.$cookies.get("loginToken").loginToken,

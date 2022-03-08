@@ -5,23 +5,23 @@
 
     <article>
       <h2>all followed tweets sent here</h2>
-      <tweet-container
+      <!-- <tweet-container
         tweet_type="discover"
         :user_id="this.$cookies.get('loginToken').userId"
         :key="this.refresh_key"
-      ></tweet-container>
+      ></tweet-container> -->
     </article>
   </div>
 </template>
 
 <script>
-import TweetContainer from "@/components/mainComponents/TweetContainer.vue";
+// import TweetContainer from "@/components/mainComponents/TweetContainer.vue";
 import HeaderContainer from "@/components/mainComponents/HeaderContainer.vue";
 export default {
   name: "discover-page",
   components: {
     HeaderContainer,
-    TweetContainer,
+    // TweetContainer,
   },
   computed: {
     refresh_key() {

@@ -42,7 +42,7 @@ export default {
       // POST request to submit comment
       this.$axios
         .request({
-          url: "https://tweeterest.ga/api/comments",
+          url: "http://localhost:5000/api/comments",
           method: "POST",
           data: post_data,
         })

@@ -1,33 +1,29 @@
 <template>
   <div>
-    <view-content
-      content_type="tweets"
-      v-for="tweet of tweets"
-      :key="tweet.tweetId"
-      :unfiltered_tweet="tweet"
-      @edit_tweet="edit_tweet"
-    ></view-content>
-    <!-- submit content would have priority when active -->
-    <submit-content v-if="this.tweet_edit !== undefined" :tweet="this.tweet_edit"></submit-content>
+    <h1>tweet request</h1>
   </div>
 </template>
 
 <script>
-import ViewContent from "@/components/VisualElement/ViewContent.vue";
-import SubmitContent from "@/components/VisualElement/SubmitContent.vue";
 
 export default {
   name: "tweet-request",
+
   components: {
-    ViewContent,
-    SubmitContent,
+  },
+  data() {
+    return {
+    };
+  },
+  props: {
+    request_type: String,
   },
   methods: {
-    //   all actions related to storing tweets are stored here
+    // all actions related to storing tweets are stored here
     // axios request for GET, POST, PATCH, DELETE
     db_request(request_data, method) {
       // variables
-      var tweet = {};
+      var tweets = {};
       var status = undefined
       this.$axios
         .request({
@@ -36,18 +32,23 @@ export default {
           data: request_data,
         })
         .then((res) => {
-          tweet = res.data,
-            status = true
+          tweets = res.data;
+          status = true
         })
         .catch((err) => {
-          tweet = err.response.data,
-            status = false
+          tweets = err.response.data;
+          status = false
         }).then(() => {
-          var response = {
-            "tweets": tweet,
-            "status": status
+          // status check
+          if (status && method === "DELETE") {
+            // for delete just display the message
+            this.$emit("update_status_message", tweets, 3000)
+          } else if (status) {
+            this.$emit("tweet_response", tweets)
+          } else {
+            // update status message with error message from database
+            this.$emit("update_status_message", tweets, 3000)
           }
-          return response
         })
     }, // GET tweet
     get(keyname, keyvalue) {
@@ -58,10 +59,10 @@ export default {
       if (keyname != undefined) {
         tweet_params[keyname] = keyvalue
       }
-
-      // axios request
-      return this.db_request(tweet_params, "GET")
-    }, // POST tweet
+      // axios 
+      this.db_request(tweet_params, "GET")
+    },
+    // POST tweet
     post(payload) {
       // build request data
       var request_data = {
@@ -76,7 +77,8 @@ export default {
       }
       // axios request
       return this.db_request(request_data, "POST")
-    }, // PATCH tweet
+    }, 
+    // PATCH tweet
     patch(payload) {
       // build request data
       var request_data = {
@@ -91,7 +93,8 @@ export default {
       }
       // axios request
       return this.db_request(request_data, "PATCH")
-    }, // DELETE tweet
+    }, 
+    // DELETE tweet
     delete(payload) {
       // build request data
       var request_data = {
@@ -107,15 +110,29 @@ export default {
       // axios request
       return this.db_request(request_data, "DELETE")
     },
+    get_feed() {
+      // update status message
+      this.$emit("update_status_message", "loading tweets..", 3000)
+      // call function to prepare data for request from database
+      this.get("feedId, this.$cookies.get('loginToken').userId")
+    },
+    get_discover() {
+      // update status message
+      this.$emit("update_status_message", "loading tweets..", 3000)
+      // call function to prepare data for request from database
+      this.get("discoverId, this.$cookies.get('loginToken').userId")
+    }
   },
-  data() {
-    return {
-      // only ordered tweets are stored here
-      tweets: [],
-      loginToken: [this.$cookies.get("loginToken")],
-      tweet_edit: undefined,
-    };
-  },
+  mounted() {
+    if (this.request_type === "feed") {
+      this.get_feed()
+    } else if (this.request_type === 'discover') {
+      this.get_discover()
+    } else {
+      console.log(this.request_type)
+    }
+  }
+
 };
 </script>
 
